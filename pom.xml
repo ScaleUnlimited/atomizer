@@ -16,10 +16,22 @@
 			<url>http://conjars.org/repo/</url>
 		</repository>
 		
+        <repository>
+            <id>bixolabs</id>
+            <name>Bixo Labs Maven2 Repository</name>
+            <url>http://bixolabs.github.com/repo/</url>
+        </repository>
+
+        <!-- For args4j -->
+        <repository>
+            <id>bixo</id>
+            <name>Bixo Maven2 Repository</name>
+            <url>http://bixo.github.com/repo/</url>
+        </repository>
 	</repositories>
 	
 	<properties>
-		<hadoop.version>1.0.2</hadoop.version>
+		<hadoop.version>1.0.3</hadoop.version>
 		<cascading.version>2.1.0</cascading.version>
 	</properties>
 
@@ -46,6 +58,12 @@
 			<groupId>cascading</groupId>
 			<artifactId>cascading-hadoop</artifactId>
 			<version>${cascading.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.scaleunlimited</groupId>
+            <artifactId>cascading.utils</artifactId>
+            <version>2.0</version>
         </dependency>
 
         <!-- Provided -->
