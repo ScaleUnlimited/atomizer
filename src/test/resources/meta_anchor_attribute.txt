@@ -1,0 +1,14 @@
+1	Name
+2	First
+3	First Name
+4	Last
+5	Last Name
+6	Street Number
+7	Street Prefix
+8	Street Name
+9	Street Suffix
+10	City Name
+11	State Province Name
+12	Postal Code
+101	FamilyName
+102	GivenName

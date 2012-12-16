@@ -1,0 +1,8 @@
+1	1	First Name/Billy-Jim,Last Name/Ramsey,Street Number/22,Street Prefix/E,Street Name/Rigby,Street Suffix/Ct,City Name/Sassafras Junc,State Province Name/TN,Postal Code/77726
+1	2	First Name/Rex,Last Name/Riggs,Street Number/58377,Street Prefix/N,Street Name/Hewlet,Street Suffix/St,City Name/Renshaw,State Province Name/AL,Postal Code/909y8
+1	3	First Name/James,Last Name/Reach,Street Number/888,Street Prefix/W,Street Name/Thursday,Street Suffix/Dr,City Name/Hell,State Province Name/Michigan,Postal Code/44487
+1	4	First Name/Sally,Last Name/James,Street Number/888,Street Prefix/E,Street Name/Thursday,Street Suffix/St,City Name/Jamestown,State Province Name/CO,Postal Code/55432
+2	1	Name/Ram's Lock and Key,Street Number/8898,Street Prefix/N,Street Name/Savax,Street Suffix/Dr,City Name/Colfax,State Province Name/ID,Postal Code/88920
+2	2	Name/Blitz Storage,Street Number/888,Street Prefix/W,Street Name/Rex,Street Suffix/St,City Name/Summersville,State Province Name/CA,Postal Code/67675
+2	3	Name/James Ltd.,Street Number/888,Street Prefix/W,Street Name/Thursday,Street Suffix/Dr,City Name/Hell,State Province Name/Michigan,Postal Code/44487
+3	1	First/Sally,Last/Riggs
