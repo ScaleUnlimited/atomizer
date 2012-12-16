@@ -39,12 +39,12 @@ public class AllAtomsTest extends AbstractFlowTest {
         BasePlatform platform = new HadoopPlatform(AllAtomsTest.class);
         platform.setJobPollingInterval(CASCADING_LOCAL_JOB_POLLING_INTERVAL);
         
-        BasePath recordsPath = platform.makePath("src/test/resources/atom_counts.txt");
+        BasePath recordsPath = platform.makePath("src/test/resources/atomize.txt");
         Tap recordsSource = platform.makeTap(platform.makeTextScheme(), recordsPath);
 
         Pipe atomCounts = new Pipe("atom counts");
         atomCounts = new Each(atomCounts, new CreateAtomCountFromText());
-        AllAtoms allAtoms = new AllAtoms(atomCounts);
+        AllAtoms allAtoms = new AllAtoms(atomCounts, 1);    // TODO VMa - figure out numTasks
         
         BasePath workingDirPath = platform.makePath(WORKING_DIR);
         BasePath allAtomsPath = platform.makePath(workingDirPath, "allAtoms");

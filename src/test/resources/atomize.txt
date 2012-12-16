@@ -1,0 +1,43 @@
+Dr	3	0
+St	3	1
+Thursday	3	2
+W	3	3
+888	2	4
+44487	2	5
+E	2	6
+Hell	2	7
+James	2	8
+Michigan	2	9
+N	2	10
+Rex	2	11
+6543	2	12
+Riggs	2	13
+Sally	2	14
+22	1	15
+8898	1	16
+55432	1	17
+58377	1	18
+67675	1	19
+77726	1	20
+88920	1	21
+909y8	1	22
+AL	1	23
+Billy-Jim	1	24
+Blitz Storage	1	25
+CA	1	26
+CO	1	27
+Colfax	1	28
+Ct	1	29
+Hewlet	1	30
+ID	1	31
+James Ltd.	1	32
+Jamestown	1	33
+Ram's Lock and Key	1	34
+Ramsey	1	35
+Reach	1	36
+Renshaw	1	37
+Rigby	1	38
+Sassafras Junc	1	39
+Savax	1	40
+Summersville	1	41
+TN	1	42

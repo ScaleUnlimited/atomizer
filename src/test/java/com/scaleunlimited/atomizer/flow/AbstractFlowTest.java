@@ -17,7 +17,7 @@ import cascading.operation.Function;
 import cascading.operation.FunctionCall;
 
 import com.scaleunlimited.atomizer.datum.AllAtomsDatum;
-import com.scaleunlimited.atomizer.datum.AtomCountDatum;
+import com.scaleunlimited.atomizer.datum.AtomizeDatum;
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
 import com.scaleunlimited.atomizer.datum.RecordDatum;
 import com.scaleunlimited.cascading.NullContext;
@@ -84,7 +84,7 @@ public abstract class AbstractFlowTest {
     public static class CreateAtomCountFromText extends BaseOperation<NullContext> implements Function<NullContext> {
 
         public CreateAtomCountFromText() {
-            super(AtomCountDatum.FIELDS);
+            super(AtomizeDatum.FIELDS);
         }
         
         @Override
@@ -92,9 +92,9 @@ public abstract class AbstractFlowTest {
 
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
-            if (split.length == 2) {
-                //  atom,  count
-                AtomCountDatum datum = new AtomCountDatum(split[0], Integer.parseInt(split[1]));
+            if (split.length == 3) {
+                //  atom,  count, taskId
+                AtomizeDatum datum = new AtomizeDatum(split[0], Integer.parseInt(split[1]), Integer.parseInt(split[2]));
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);
