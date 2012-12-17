@@ -1,7 +1,5 @@
 package com.scaleunlimited.atomizer.flow;
 
-import java.security.InvalidParameterException;
-
 import org.apache.log4j.Logger;
 
 import cascading.flow.FlowProcess;
@@ -12,7 +10,6 @@ import cascading.operation.Identity;
 import cascading.operation.OperationCall;
 import cascading.pipe.Each;
 import cascading.pipe.Pipe;
-import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.CountBy;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleEntry;
@@ -31,7 +28,7 @@ import com.scaleunlimited.cascading.NullContext;
 // Generates atom, count pairs.
 
 @SuppressWarnings("serial")
-public class Atomize extends SubAssembly {
+public class Atomize extends AtomizerSubAssembly {
 
     public static final String ATOMIZE_PIPE_NAME = "atomize";
 
@@ -103,14 +100,4 @@ public class Atomize extends SubAssembly {
         return getTailPipe(ATOMIZE_PIPE_NAME);
     }
     
-    private Pipe getTailPipe(String pipeName) {
-        String[] pipeNames = getTailNames();
-        for (int i = 0; i < pipeNames.length; i++) {
-            if (pipeName.equals(pipeNames[i])) {
-                return getTails()[i];
-            }
-        }
-        throw new InvalidParameterException("Invalid pipe name: " + pipeName);
-    }
-
 }

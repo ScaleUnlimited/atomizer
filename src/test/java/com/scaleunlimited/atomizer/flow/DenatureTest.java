@@ -14,8 +14,8 @@ import cascading.pipe.Pipe;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
 
-import com.scaleunlimited.atomizer.parser.BaseParser;
-import com.scaleunlimited.atomizer.parser.SimpleParser;
+import com.scaleunlimited.atomizer.extractor.BaseExtractor;
+import com.scaleunlimited.atomizer.extractor.SimpleExtractor;
 import com.scaleunlimited.cascading.BasePath;
 import com.scaleunlimited.cascading.BasePlatform;
 import com.scaleunlimited.cascading.FlowResult;
@@ -52,16 +52,16 @@ public class DenatureTest extends AbstractFlowTest {
         Map<String, String> attributeIdToAnchorIdMap = readMapFile("src/test/resources/meta_attribute.txt", false);
         Map<String, String> datasetIdToMetaRecord = readMapFile("src/test/resources/meta_dataset_record.txt", false);
         List<String> metaRecords = readFileLines("src/test/resources/meta_record.txt");
-        BaseParser parser = new SimpleParser(attributeNameToIdMap, attributeIdToAnchorIdMap, 
+        BaseExtractor extractor = new SimpleExtractor(attributeNameToIdMap, attributeIdToAnchorIdMap, 
                         datasetIdToMetaRecord, metaRecords);
-        Denature denature = new Denature(recordsPipe, parser);
+        Denature denature = new Denature(recordsPipe, extractor);
         
         BasePath workingDirPath = platform.makePath(WORKING_DIR);
         BasePath denaturedPath = platform.makePath(workingDirPath, "denatured");
         Tap denaturedSink = platform.makeTap(platform.makeTextScheme(), denaturedPath, SinkMode.REPLACE);
         
         FlowConnector flowConnector = platform.makeFlowConnector();
-        return flowConnector.connect(recordsSource, denaturedSink, denature.getAnchorsTailPipe());
+        return flowConnector.connect(recordsSource, denaturedSink, denature.getDenaturedTailPipe());
        
     }
 }

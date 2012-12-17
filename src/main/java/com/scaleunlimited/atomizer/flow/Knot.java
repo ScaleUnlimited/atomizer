@@ -1,7 +1,5 @@
 package com.scaleunlimited.atomizer.flow;
 
-import java.security.InvalidParameterException;
-
 import org.apache.log4j.Logger;
 
 import cascading.flow.FlowProcess;
@@ -12,7 +10,6 @@ import cascading.operation.OperationCall;
 import cascading.pipe.Each;
 import cascading.pipe.HashJoin;
 import cascading.pipe.Pipe;
-import cascading.pipe.SubAssembly;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleEntry;
 import cascading.tuple.TupleEntryCollector;
@@ -30,7 +27,7 @@ import com.scaleunlimited.cascading.NullContext;
 // Generates atomId dataSetId recordId attributeId tuples
 
 @SuppressWarnings("serial")
-public class Knot extends SubAssembly {
+public class Knot extends AtomizerSubAssembly {
 
     public static final String KNOT_PIPE_NAME = "knot";
 
@@ -94,14 +91,4 @@ public class Knot extends SubAssembly {
         return getTailPipe(KNOT_PIPE_NAME);
     }
     
-    private Pipe getTailPipe(String pipeName) {
-        String[] pipeNames = getTailNames();
-        for (int i = 0; i < pipeNames.length; i++) {
-            if (pipeName.equals(pipeNames[i])) {
-                return getTails()[i];
-            }
-        }
-        throw new InvalidParameterException("Invalid pipe name: " + pipeName);
-    }
-
 }

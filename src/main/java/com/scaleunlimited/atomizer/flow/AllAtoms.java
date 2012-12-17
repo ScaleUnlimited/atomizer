@@ -1,15 +1,7 @@
 package com.scaleunlimited.atomizer.flow;
 
-import java.security.InvalidParameterException;
-
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.log4j.Logger;
-
-import com.scaleunlimited.atomizer.datum.AllAtomsDatum;
-import com.scaleunlimited.atomizer.datum.AtomizeDatum;
-import com.scaleunlimited.cascading.LoggingFlowProcess;
-import com.scaleunlimited.cascading.LoggingFlowReporter;
-import com.scaleunlimited.cascading.NullContext;
 
 import cascading.flow.FlowProcess;
 import cascading.operation.BaseOperation;
@@ -18,8 +10,13 @@ import cascading.operation.FunctionCall;
 import cascading.operation.OperationCall;
 import cascading.pipe.Each;
 import cascading.pipe.Pipe;
-import cascading.pipe.SubAssembly;
 import cascading.tuple.TupleEntryCollector;
+
+import com.scaleunlimited.atomizer.datum.AllAtomsDatum;
+import com.scaleunlimited.atomizer.datum.AtomizeDatum;
+import com.scaleunlimited.cascading.LoggingFlowProcess;
+import com.scaleunlimited.cascading.LoggingFlowReporter;
+import com.scaleunlimited.cascading.NullContext;
 
 // AllAtoms is a sub assembly which assigns id numbers to atoms roughly based on frequency of 
 // occurrence across all data sets, and keeps the count of each atom.
@@ -27,7 +24,7 @@ import cascading.tuple.TupleEntryCollector;
 // Generates atomId, atom, count tuples.
 
 @SuppressWarnings("serial")
-public class AllAtoms extends SubAssembly {
+public class AllAtoms extends AtomizerSubAssembly {
 
     public static final String ALLATOMS_PIPE_NAME = "allatoms";
 
@@ -96,14 +93,4 @@ public class AllAtoms extends SubAssembly {
         return getTailPipe(ALLATOMS_PIPE_NAME);
     }
     
-    private Pipe getTailPipe(String pipeName) {
-        String[] pipeNames = getTailNames();
-        for (int i = 0; i < pipeNames.length; i++) {
-            if (pipeName.equals(pipeNames[i])) {
-                return getTails()[i];
-            }
-        }
-        throw new InvalidParameterException("Invalid pipe name: " + pipeName);
-    }
-
 }

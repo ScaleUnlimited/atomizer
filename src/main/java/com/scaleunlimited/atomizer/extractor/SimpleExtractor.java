@@ -1,4 +1,4 @@
-package com.scaleunlimited.atomizer.parser;
+package com.scaleunlimited.atomizer.extractor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,16 +11,16 @@ import org.apache.log4j.Logger;
 
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
 
-public class SimpleParser extends BaseParser {
+public class SimpleExtractor extends BaseExtractor {
 
-    private static final Logger LOGGER = Logger.getLogger(SimpleParser.class);
+    private static final Logger LOGGER = Logger.getLogger(SimpleExtractor.class);
 
     private Map<String, String> _attributeNameToIdMap;
     private Map<String, String> _attributeIdToAnchorIdMap;
     private Map<String, Set<String>> _datasetIdToAttributeSetMap;
 
 
-    public SimpleParser(Map<String, String>attributeNameToIdMap, Map<String, String>attributeIdToAnchorIdMap,
+    public SimpleExtractor(Map<String, String>attributeNameToIdMap, Map<String, String>attributeIdToAnchorIdMap,
                     Map<String, String>datasetIdToMetaRecord, List<String>metaRecords) {
         _attributeNameToIdMap = attributeNameToIdMap;
         _attributeIdToAnchorIdMap = attributeIdToAnchorIdMap;

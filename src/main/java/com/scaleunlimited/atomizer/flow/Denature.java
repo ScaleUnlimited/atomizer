@@ -1,18 +1,10 @@
 package com.scaleunlimited.atomizer.flow;
 
-import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-
-import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
-import com.scaleunlimited.atomizer.datum.RecordDatum;
-import com.scaleunlimited.atomizer.parser.BaseParser;
-import com.scaleunlimited.cascading.LoggingFlowProcess;
-import com.scaleunlimited.cascading.LoggingFlowReporter;
-import com.scaleunlimited.cascading.NullContext;
 
 import cascading.flow.FlowProcess;
 import cascading.operation.BaseOperation;
@@ -21,29 +13,37 @@ import cascading.operation.FunctionCall;
 import cascading.operation.OperationCall;
 import cascading.pipe.Each;
 import cascading.pipe.Pipe;
-import cascading.pipe.SubAssembly;
 import cascading.tuple.TupleEntryCollector;
+
+import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
+import com.scaleunlimited.atomizer.datum.RecordDatum;
+import com.scaleunlimited.atomizer.extractor.BaseExtractor;
+import com.scaleunlimited.cascading.LoggingFlowProcess;
+import com.scaleunlimited.cascading.LoggingFlowReporter;
+import com.scaleunlimited.cascading.NullContext;
 
 //Takes in 
 //  - tuples that contain datasetId, recordUuid, and a key/value (attribute name/value) map.
-//  - tuples that have datasetId, meta record id
+//  - a BaseExtractor for extracting anchorId and attributeId from meta records
+//
+// Outputs DenaturedAttributeDatums
 
 @SuppressWarnings("serial")
-public class Denature extends SubAssembly {
+public class Denature extends AtomizerSubAssembly {
 
-    public static final String ANCHORS_PIPE_NAME = "anchors";
+    public static final String DENATURED_PIPE_NAME = "denatured";
 
     @SuppressWarnings({"rawtypes"})
     private static class ExtractAnchorsFromRecord extends BaseOperation<NullContext> implements Function<NullContext> {
         private static final Logger LOGGER = Logger.getLogger(ExtractAnchorsFromRecord.class);
 
-        private BaseParser _parser;
+        private BaseExtractor _extractor;
         private transient LoggingFlowProcess _flowProcess;
 
-        public ExtractAnchorsFromRecord(BaseParser parser) {
+        public ExtractAnchorsFromRecord(BaseExtractor extractor) {
             super(DenaturedAttributeDatum.FIELDS);
             
-            _parser = parser;
+            _extractor = extractor;
         }
         
         @SuppressWarnings("unchecked")
@@ -71,7 +71,7 @@ public class Denature extends SubAssembly {
             String recordUuid = recordDatum.getRecordUuid();
             Map<String, String> attributeMap = recordDatum.getAttributeMap();
             for (Entry<String, String> entry : attributeMap.entrySet()) {
-                List<DenaturedAttributeDatum> anchorDatums = _parser.parse(datasetId, recordUuid, entry.getKey(), entry.getValue());
+                List<DenaturedAttributeDatum> anchorDatums = _extractor.parse(datasetId, recordUuid, entry.getKey(), entry.getValue());
                 for (DenaturedAttributeDatum anchorDatum : anchorDatums) {
                     if (anchorDatum.getAnchorId() != null) {
                         outputCollector.add(anchorDatum.getTuple());
@@ -83,25 +83,15 @@ public class Denature extends SubAssembly {
             }
         }
     }
-    public Denature(Pipe recordPipe, BaseParser parser) {
+    public Denature(Pipe recordPipe, BaseExtractor extractor) {
         
-        Pipe anchorPipe = new Pipe(ANCHORS_PIPE_NAME, recordPipe);
-        anchorPipe = new Each(anchorPipe, new ExtractAnchorsFromRecord(parser));
+        Pipe denaturedPipe = new Pipe(DENATURED_PIPE_NAME, recordPipe);
+        denaturedPipe = new Each(denaturedPipe, new ExtractAnchorsFromRecord(extractor));
         
-        setTails(anchorPipe);
+        setTails(denaturedPipe);
     }
     
-    public Pipe getAnchorsTailPipe() {
-        return getTailPipe(ANCHORS_PIPE_NAME);
-    }
-    
-    private Pipe getTailPipe(String pipeName) {
-        String[] pipeNames = getTailNames();
-        for (int i = 0; i < pipeNames.length; i++) {
-            if (pipeName.equals(pipeNames[i])) {
-                return getTails()[i];
-            }
-        }
-        throw new InvalidParameterException("Invalid pipe name: " + pipeName);
+    public Pipe getDenaturedTailPipe() {
+        return getTailPipe(DENATURED_PIPE_NAME);
     }
 }
