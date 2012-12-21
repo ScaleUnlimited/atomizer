@@ -2,6 +2,7 @@ package com.scaleunlimited.atomizer.flow;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,23 +46,31 @@ public class DenatureTest extends AbstractFlowTest {
         
         BasePath recordsPath = platform.makePath("src/test/resources/records.txt");
         Tap recordsSource = platform.makeTap(platform.makeTextScheme(), recordsPath);
-
         Pipe recordsPipe = new Pipe("records");
+        
+        BasePath metaDatasetRecordsPath = platform.makePath("src/test/resources/meta_dataset_record.txt");
+        Tap metaDatasetRecordsSource = platform.makeTap(platform.makeTextScheme(), metaDatasetRecordsPath);
+        Pipe metaDatasetRecordsPipe = new Pipe("meta dataset records");
+
+        Map<String, Tap>sources = new HashMap<String, Tap>();
+        sources.put(recordsPipe.getName(), recordsSource);
+        sources.put(metaDatasetRecordsPipe.getName(), metaDatasetRecordsSource);
+
         recordsPipe = new Each(recordsPipe, new CreateRecordsDatumFromText());
+        metaDatasetRecordsPipe = new Each(metaDatasetRecordsPipe, new CreateMetaDatasetRecordsDatumFromText());
+
         Map<String, String> attributeNameToIdMap = readMapFile("src/test/resources/meta_anchor_attribute.txt", true);
         Map<String, String> attributeIdToAnchorIdMap = readMapFile("src/test/resources/meta_attribute.txt", false);
-        Map<String, String> datasetIdToMetaRecord = readMapFile("src/test/resources/meta_dataset_record.txt", false);
         List<String> metaRecords = readFileLines("src/test/resources/meta_record.txt");
-        BaseExtractor extractor = new SimpleExtractor(attributeNameToIdMap, attributeIdToAnchorIdMap, 
-                        datasetIdToMetaRecord, metaRecords);
-        Denature denature = new Denature(recordsPipe, extractor);
+        BaseExtractor extractor = new SimpleExtractor(attributeNameToIdMap, attributeIdToAnchorIdMap, metaRecords);
+        Denature denature = new Denature(recordsPipe, metaDatasetRecordsPipe, extractor);
         
         BasePath workingDirPath = platform.makePath(WORKING_DIR);
         BasePath denaturedPath = platform.makePath(workingDirPath, "denatured");
         Tap denaturedSink = platform.makeTap(platform.makeTextScheme(), denaturedPath, SinkMode.REPLACE);
         
         FlowConnector flowConnector = platform.makeFlowConnector();
-        return flowConnector.connect(recordsSource, denaturedSink, denature.getDenaturedTailPipe());
+        return flowConnector.connect(sources, denaturedSink, denature.getDenaturedTailPipe());
        
     }
 }

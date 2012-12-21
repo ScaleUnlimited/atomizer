@@ -17,5 +17,4 @@ public abstract class AtomizerSubAssembly extends SubAssembly {
         }
         throw new InvalidParameterException("Invalid pipe name: " + pipeName);
     }
-
 }

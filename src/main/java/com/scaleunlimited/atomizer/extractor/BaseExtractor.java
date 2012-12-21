@@ -6,5 +6,5 @@ import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
 
 public abstract class BaseExtractor {
 
-    public abstract List<DenaturedAttributeDatum> parse(String datasetId, String recordUuid, String attributeName, String attributeValue);
+    public abstract List<DenaturedAttributeDatum> extract(String datasetId, String recordUuid, String metaId, String attributeName, String attributeValue);
 }

@@ -19,27 +19,27 @@ import cascading.operation.FunctionCall;
 import com.scaleunlimited.atomizer.datum.AllAtomsDatum;
 import com.scaleunlimited.atomizer.datum.AtomizeDatum;
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
+import com.scaleunlimited.atomizer.datum.MetaDatasetRecordDatum;
 import com.scaleunlimited.atomizer.datum.RecordDatum;
 import com.scaleunlimited.cascading.NullContext;
 
 public abstract class AbstractFlowTest {
-    
+
     private static final Logger LOGGER = Logger.getLogger(AbstractFlowTest.class);
 
     public static final long CASCADING_LOCAL_JOB_POLLING_INTERVAL = 100;
 
-
     @SuppressWarnings("serial")
     public static class CreateRecordsDatumFromText extends BaseOperation<NullContext> implements Function<NullContext> {
-    
+
         public CreateRecordsDatumFromText() {
             super(RecordDatum.FIELDS);
         }
-        
+
         @SuppressWarnings("rawtypes")
         @Override
         public void operate(FlowProcess flowProcess, FunctionCall<NullContext> functionCall) {
-    
+
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
             if (split.length == 3) {
@@ -53,80 +53,102 @@ public abstract class AbstractFlowTest {
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);
-             }
+            }
         }
     }
 
-    @SuppressWarnings({"serial", "rawtypes"})
+    @SuppressWarnings("serial")
+    public static class CreateMetaDatasetRecordsDatumFromText extends BaseOperation<NullContext> implements Function<NullContext> {
+
+        public CreateMetaDatasetRecordsDatumFromText() {
+            super(MetaDatasetRecordDatum.FIELDS);
+        }
+
+        @SuppressWarnings("rawtypes")
+        @Override
+        public void operate(FlowProcess flowProcess, FunctionCall<NullContext> functionCall) {
+
+            String line = functionCall.getArguments().getString("line");
+            String[] split = line.split("\t");
+            if (split.length == 2) {
+                MetaDatasetRecordDatum datum = new MetaDatasetRecordDatum(split[0], split[1]);
+                functionCall.getOutputCollector().add(datum.getTuple());
+            } else {
+                LOGGER.error("Invalid import line: " + line);
+            }
+        }
+    }
+
+    @SuppressWarnings({ "serial", "rawtypes" })
     public static class CreateDenaturedAttributeDatumFromText extends BaseOperation<NullContext> implements Function<NullContext> {
-    
+
         public CreateDenaturedAttributeDatumFromText() {
             super(DenaturedAttributeDatum.FIELDS);
         }
-        
+
         @Override
         public void operate(FlowProcess flowProcess, FunctionCall<NullContext> functionCall) {
-    
+
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
             if (split.length == 5) {
-                
-                //  datasetId,  recordUuid,  anchorId,  attributeId, atom
+
+                // datasetId, recordUuid, anchorId, attributeId, atom
                 DenaturedAttributeDatum datum = new DenaturedAttributeDatum(split[0], split[1], split[2], split[3], split[4]);
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);
-             }
+            }
         }
     }
 
-    @SuppressWarnings({"serial", "rawtypes"})
+    @SuppressWarnings({ "serial", "rawtypes" })
     public static class CreateAtomCountFromText extends BaseOperation<NullContext> implements Function<NullContext> {
 
         public CreateAtomCountFromText() {
             super(AtomizeDatum.FIELDS);
         }
-        
+
         @Override
         public void operate(FlowProcess flowProcess, FunctionCall<NullContext> functionCall) {
 
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
             if (split.length == 3) {
-                //  atom,  count, taskId
+                // atom, count, taskId
                 AtomizeDatum datum = new AtomizeDatum(split[0], Integer.parseInt(split[1]), Integer.parseInt(split[2]));
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);
-             }
+            }
         }
     }
 
-    @SuppressWarnings({"serial", "rawtypes"})
+    @SuppressWarnings({ "serial", "rawtypes" })
     public static class CreateAllAtomsFromText extends BaseOperation<NullContext> implements Function<NullContext> {
 
         public CreateAllAtomsFromText() {
             super(AllAtomsDatum.FIELDS);
         }
-        
+
         @Override
         public void operate(FlowProcess flowProcess, FunctionCall<NullContext> functionCall) {
 
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
             if (split.length == 3) {
-                //  atomId,  atom, count
+                // atomId, atom, count
                 AllAtomsDatum datum = new AllAtomsDatum(Integer.parseInt(split[0]), split[1], Integer.parseInt(split[2]));
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);
-             }
+            }
         }
     }
 
     public static Map<String, String> readMapFile(String fileName, boolean flip) throws IOException {
-        Map<String, String>map = new HashMap<String, String>();
-        
+        Map<String, String> map = new HashMap<String, String>();
+
         InputStream is = new FileInputStream(new File(fileName));
         try {
             List<String> lines = IOUtils.readLines(is);
@@ -136,7 +158,7 @@ public abstract class AbstractFlowTest {
                     if (split.length == 2) {
                         if (flip) {
                             map.put(split[1], split[0]);
-        
+
                         } else {
                             map.put(split[0], split[1]);
                         }
@@ -148,23 +170,21 @@ public abstract class AbstractFlowTest {
         } finally {
             IOUtils.closeQuietly(is);
         }
-        
+
         return map;
     }
 
     public static List<String> readFileLines(String fileName) throws IOException {
         List<String> lines = null;
-        
+
         InputStream is = new FileInputStream(new File(fileName));
         try {
             lines = IOUtils.readLines(is);
         } finally {
             IOUtils.closeQuietly(is);
         }
-        
+
         return lines;
     }
 
-
-    
 }
