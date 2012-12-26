@@ -165,6 +165,11 @@ Copyright (c) 2012 Scale Unlimited.
 				<pathelement location="${test.res.dir}" />
 				<path refid="test.classpath" />
 			</classpath>
+			
+			<!-- Get rid of "Unable to load realm info from SCDynamicStore" warnings -->
+			<jvmarg value="-Djava.security.krb5.realm=" />
+			<jvmarg value="-Djava.security.krb5.kdc=" />
+			
 			<formatter type="plain" />
 			<batchtest fork="yes" todir="${build.dir.it-reports}" unless="testcase">
 				<fileset dir="${it.src.dir}">
