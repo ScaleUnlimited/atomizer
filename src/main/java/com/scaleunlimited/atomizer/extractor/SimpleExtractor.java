@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
 
+@SuppressWarnings("serial")
 public class SimpleExtractor extends BaseExtractor {
 
     private static final Logger LOGGER = Logger.getLogger(SimpleExtractor.class);
