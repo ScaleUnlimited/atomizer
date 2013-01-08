@@ -25,7 +25,7 @@ import com.scaleunlimited.cascading.hadoop.HadoopPlatform;
 
 public class EndToEndTest extends AbstractFlowTest {
 
-    private static final String WORKING_DIR = "build/it/AllFlowsIntegrationTest";
+    private static final String WORKING_DIR = "build/test/EndToEndTest";
 
     @Test
     public void testAllFlows() throws Exception {
