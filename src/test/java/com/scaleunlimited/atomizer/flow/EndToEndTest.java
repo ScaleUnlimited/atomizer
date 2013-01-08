@@ -23,7 +23,7 @@ import com.scaleunlimited.cascading.FlowResult;
 import com.scaleunlimited.cascading.FlowRunner;
 import com.scaleunlimited.cascading.hadoop.HadoopPlatform;
 
-public class AllFlowsIntegrationTest extends AbstractFlowTest {
+public class EndToEndTest extends AbstractFlowTest {
 
     private static final String WORKING_DIR = "build/it/AllFlowsIntegrationTest";
 
@@ -31,17 +31,19 @@ public class AllFlowsIntegrationTest extends AbstractFlowTest {
     public void testAllFlows() throws Exception {
         
         // Create a workflow to test all the SubAssemblies 
-        FlowResult result = FlowRunner.run(createIntegrationFlow());
+        FlowResult result = FlowRunner.run(createEndToEndFlow());
 
         // Assert that we got the desired number of knots
         assertEquals(10, result.getCounterValue(AtomizerCounters.TOTAL_KNOTS));
+        
+        // TODO VMa - verify expected values of knots
 
     }
     
     @SuppressWarnings("rawtypes")
-    private static Flow createIntegrationFlow() throws Exception {
+    private static Flow createEndToEndFlow() throws Exception {
         
-        BasePlatform platform = new HadoopPlatform(AllFlowsIntegrationTest.class);
+        BasePlatform platform = new HadoopPlatform(EndToEndTest.class);
         platform.setJobPollingInterval(CASCADING_LOCAL_JOB_POLLING_INTERVAL);
 
         

@@ -99,21 +99,6 @@ Copyright (c) 2012 Scale Unlimited.
 		</javac>
 	</target>
 
-	<target name="compile-test-it" depends="compile-test">
-		<echo>*** Building Unit Tests Sources ***</echo>
-		<mkdir dir="${build.dir.it-classes}" />
-		<path id="test.path">
-			<pathelement location="${build.dir.main-classes}" />
-			<pathelement location="${build.dir.test-classes}" />
-			<pathelement location="${build.dir.it-classes}" />
-		</path>
-
-		<javac encoding="${build.encoding}" srcdir="${it.src.dir}" includes="**/*.java" destdir="${build.dir.it-classes}" debug="${javac.debug}" optimize="${javac.optimize}" target="${javac.version}" source="${javac.version}" deprecation="${javac.deprecation}">
-			<compilerarg line="${javac.args} ${javac.args.warnings}" />
-			<classpath refid="test.classpath" />
-			<classpath refid="test.path" />
-		</javac>
-	</target>
 
 	<!-- ================================================================== -->
 	<!-- Unit Tests                                                         -->
@@ -152,50 +137,12 @@ Copyright (c) 2012 Scale Unlimited.
 		<fail if="tests.failed">Unit tests failed!</fail>
 	</target>
 
-	<target name="test-it" depends="compile, compile-test, compile-test-it" description="--> run integration tests">
-		<delete dir="${build.dir.it-reports}" />
-		<mkdir dir="${build.dir.it-reports}" />
-
-		<junit showoutput="false" printsummary="yes" haltonfailure="no" fork="yes" maxmemory="256m" dir="${basedir}" errorProperty="tests.failed" failureProperty="tests.failed">
-			<classpath>
-				<pathelement location="${build.dir.main-classes}" />
-				<pathelement location="${build.dir.test-classes}" />
-				<pathelement location="${build.dir.it-classes}" />
-				<pathelement location="${main.res.dir}" />
-				<pathelement location="${test.res.dir}" />
-				<path refid="test.classpath" />
-			</classpath>
-			
-			<!-- Get rid of "Unable to load realm info from SCDynamicStore" warnings -->
-			<jvmarg value="-Djava.security.krb5.realm=" />
-			<jvmarg value="-Djava.security.krb5.kdc=" />
-			
-			<formatter type="plain" />
-			<batchtest fork="yes" todir="${build.dir.it-reports}" unless="testcase">
-				<fileset dir="${it.src.dir}">
-					<include name="**/*Test.java" unless="testcase" />
-					<exclude name="**/Abstract*.java" unless="testcase" />
-					<exclude name="**/Base*.java" unless="testcase" />
-					<exclude name="**/ExtendedTestCase.java" unless="testcase" />
-					<include name="${testcase}" if="testcase" />
-				</fileset>
-			</batchtest>
-			<batchtest fork="yes" todir="${build.dir.test-reports}" if="testcase">
-				<fileset dir="${it.src.dir}" includes="**/${testcase}.java" />
-			</batchtest>
-		</junit>
-		<fail if="tests.failed">Unit tests failed!</fail>
-	</target>
-
 
 	<!-- ================================================================== -->
 	<!-- Multi target build                                                -->
 	<!-- ================================================================== -->
 
-	<target name="test-all" depends="test, test-it" description="--> run all tests">
-	</target>
-
-	<target name="compile-all" depends="compile, compile-test, compile-test-it" description="--> compile all files including tests">
+	<target name="compile-all" depends="compile, compile-test" description="--> compile all files including tests">
 	</target>
 
 	<!-- ================================================================== -->
@@ -317,7 +264,6 @@ Copyright (c) 2012 Scale Unlimited.
 				<source path="${basedir}/src/main/resources" output="${build.dir.main-classes-eclipse}" />
 				<source path="${basedir}/src/test/java" output="${build.dir.test-classes-eclipse}" />
 				<source path="${basedir}/src/test/resources" output="${build.dir.test-classes-eclipse}" />
-				<source path="${basedir}/src/it/java" output="${build.dir.it-classes-eclipse}" />
 
 				<output path="${build.dir.main-classes-eclipse}" />
 				<library pathref="test.classpath" exported="false" />
