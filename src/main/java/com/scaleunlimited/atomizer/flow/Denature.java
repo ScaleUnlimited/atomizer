@@ -19,7 +19,7 @@ import cascading.tuple.TupleEntry;
 import cascading.tuple.TupleEntryCollector;
 
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
-import com.scaleunlimited.atomizer.datum.MetaDatasetRecordDatum;
+import com.scaleunlimited.atomizer.datum.DatasetAttributeRecordDatum;
 import com.scaleunlimited.atomizer.datum.RecordDatum;
 import com.scaleunlimited.atomizer.extractor.BaseExtractor;
 import com.scaleunlimited.cascading.LoggingFlowProcess;
@@ -75,11 +75,11 @@ public class Denature extends AtomizerSubAssembly {
             RecordDatum recordDatum = new RecordDatum(TupleEntry.select(RecordDatum.FIELDS, te));
             String datasetId = recordDatum.getDatasetId();
             String recordUuid = recordDatum.getRecordUuid();
-            MetaDatasetRecordDatum metaDatasetDatum = new MetaDatasetRecordDatum(TupleEntry.select(MetaDatasetRecordDatum.FIELDS, te));
+            DatasetAttributeRecordDatum datasetAttributeRecordDatum = new DatasetAttributeRecordDatum(TupleEntry.select(DatasetAttributeRecordDatum.FIELDS, te));
 
             Map<String, String> attributeMap = recordDatum.getAttributeMap();
             for (Entry<String, String> entry : attributeMap.entrySet()) {
-                List<DenaturedAttributeDatum> anchorDatums = _extractor.extract(datasetId, recordUuid, metaDatasetDatum.getMetaId(), entry.getKey(), entry.getValue());
+                List<DenaturedAttributeDatum> anchorDatums = _extractor.extract(datasetId, recordUuid, datasetAttributeRecordDatum.getAttributeRecordId(), entry.getKey(), entry.getValue());
                 for (DenaturedAttributeDatum anchorDatum : anchorDatums) {
                     if (anchorDatum.getAnchorId() != null) {
                         outputCollector.add(anchorDatum.getTuple());
@@ -91,10 +91,10 @@ public class Denature extends AtomizerSubAssembly {
             }
         }
     }
-    public Denature(Pipe recordPipe, Pipe metaDatasetRecordPipe, BaseExtractor extractor) {
+    public Denature(Pipe recordPipe, Pipe datasetAttributeRecordPipe, BaseExtractor extractor) {
         
         Pipe hashPipe = new HashJoin(recordPipe, new Fields(RecordDatum.DATASET_ID_FN), 
-                        metaDatasetRecordPipe, new Fields(MetaDatasetRecordDatum.DATASET_ID_FN));
+                        datasetAttributeRecordPipe, new Fields(DatasetAttributeRecordDatum.DATASET_ID_FN));
         
         Pipe denaturedPipe = new Pipe(DENATURED_PIPE_NAME, hashPipe);
         denaturedPipe = new Each(denaturedPipe, new ExtractAnchorsFromRecord(extractor));

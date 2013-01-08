@@ -18,47 +18,47 @@ public class SimpleExtractor extends BaseExtractor {
 
     private Map<String, String> _attributeNameToIdMap;
     private Map<String, String> _attributeIdToAnchorIdMap;
-    private Map<String, Set<String>> _metaRecordIdToAttributeSetMap;
+    private Map<String, Set<String>> _attributeRecordIdToAttributeSetMap;
 
 
     public SimpleExtractor(Map<String, String>attributeNameToIdMap, Map<String, String>attributeIdToAnchorIdMap,
-                    List<String>metaRecords) {
+                    List<String>attributeRecords) {
         _attributeNameToIdMap = attributeNameToIdMap;
         _attributeIdToAnchorIdMap = attributeIdToAnchorIdMap;
-        _metaRecordIdToAttributeSetMap = createMetaRecordIdToAttributeSetMap(metaRecords);
+        _attributeRecordIdToAttributeSetMap = createAttributeRecordIdToAttributeSetMap(attributeRecords);
     }
     
     
-    private Map<String, Set<String>> createMetaRecordIdToAttributeSetMap(List<String> metaRecords) {
-        Map<String, Set<String>> metaRecordIdToAttributeSetMap = new HashMap<String, Set<String>>();
-        for (String record : metaRecords) {
+    private Map<String, Set<String>> createAttributeRecordIdToAttributeSetMap(List<String> attributeRecords) {
+        Map<String, Set<String>> attributeRecordIdToAttributeSetMap = new HashMap<String, Set<String>>();
+        for (String record : attributeRecords) {
             String[] split = record.split("\t");
             if (split.length == 2) {
-                if (metaRecordIdToAttributeSetMap.containsKey(split[0])) {
-                    Set<String> attributesSet = metaRecordIdToAttributeSetMap.get(split[0]);
+                if (attributeRecordIdToAttributeSetMap.containsKey(split[0])) {
+                    Set<String> attributesSet = attributeRecordIdToAttributeSetMap.get(split[0]);
                     attributesSet.add(split[1]);
-                    metaRecordIdToAttributeSetMap.put(split[0], attributesSet);
+                    attributeRecordIdToAttributeSetMap.put(split[0], attributesSet);
                 } else {
                     Set<String> attributesSet = new HashSet<String>();
                     attributesSet.add(split[1]);
-                    metaRecordIdToAttributeSetMap.put(split[0], attributesSet);
+                    attributeRecordIdToAttributeSetMap.put(split[0], attributesSet);
                 }
             } else {
                 LOGGER.warn(String.format("Invalid line '%s': expected 2 fields but got %d", record, split.length));
             }
         }
 
-        return metaRecordIdToAttributeSetMap;
+        return attributeRecordIdToAttributeSetMap;
     }
 
 
     @Override
-    public List<DenaturedAttributeDatum> extract(String datasetId, String recordUuid, String metaId, String attributeName, String attributeValue) {
+    public List<DenaturedAttributeDatum> extract(String datasetId, String recordUuid, String attributeRecordId, String attributeName, String attributeValue) {
         List<DenaturedAttributeDatum> datumsList = new ArrayList<DenaturedAttributeDatum>();
         String attributeId = null;
         String anchorId = null;
-        if (_metaRecordIdToAttributeSetMap.containsKey(metaId)) {
-            Set<String> attributeSet = _metaRecordIdToAttributeSetMap.get(metaId);
+        if (_attributeRecordIdToAttributeSetMap.containsKey(attributeRecordId)) {
+            Set<String> attributeSet = _attributeRecordIdToAttributeSetMap.get(attributeRecordId);
             if (_attributeNameToIdMap.containsKey(attributeName)) {
                 attributeId = _attributeNameToIdMap.get(attributeName);
                 if (attributeSet.contains(attributeId)) {

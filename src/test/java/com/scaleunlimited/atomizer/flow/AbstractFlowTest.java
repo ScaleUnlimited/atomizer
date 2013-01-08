@@ -19,7 +19,7 @@ import cascading.operation.FunctionCall;
 import com.scaleunlimited.atomizer.datum.AllAtomsDatum;
 import com.scaleunlimited.atomizer.datum.AtomizeDatum;
 import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
-import com.scaleunlimited.atomizer.datum.MetaDatasetRecordDatum;
+import com.scaleunlimited.atomizer.datum.DatasetAttributeRecordDatum;
 import com.scaleunlimited.atomizer.datum.RecordDatum;
 import com.scaleunlimited.cascading.NullContext;
 
@@ -58,10 +58,10 @@ public abstract class AbstractFlowTest {
     }
 
     @SuppressWarnings("serial")
-    public static class CreateMetaDatasetRecordsDatumFromText extends BaseOperation<NullContext> implements Function<NullContext> {
+    public static class CreateDatasetRecordsDatumFromText extends BaseOperation<NullContext> implements Function<NullContext> {
 
-        public CreateMetaDatasetRecordsDatumFromText() {
-            super(MetaDatasetRecordDatum.FIELDS);
+        public CreateDatasetRecordsDatumFromText() {
+            super(DatasetAttributeRecordDatum.FIELDS);
         }
 
         @SuppressWarnings("rawtypes")
@@ -71,7 +71,7 @@ public abstract class AbstractFlowTest {
             String line = functionCall.getArguments().getString("line");
             String[] split = line.split("\t");
             if (split.length == 2) {
-                MetaDatasetRecordDatum datum = new MetaDatasetRecordDatum(split[0], split[1]);
+                DatasetAttributeRecordDatum datum = new DatasetAttributeRecordDatum(split[0], split[1]);
                 functionCall.getOutputCollector().add(datum.getTuple());
             } else {
                 LOGGER.error("Invalid import line: " + line);

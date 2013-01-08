@@ -8,5 +8,5 @@ import com.scaleunlimited.atomizer.datum.DenaturedAttributeDatum;
 @SuppressWarnings("serial")
 public abstract class BaseExtractor implements Serializable {
 
-    public abstract List<DenaturedAttributeDatum> extract(String datasetId, String recordUuid, String metaId, String attributeName, String attributeValue);
+    public abstract List<DenaturedAttributeDatum> extract(String datasetId, String recordUuid, String attributeRecordId, String attributeName, String attributeValue);
 }

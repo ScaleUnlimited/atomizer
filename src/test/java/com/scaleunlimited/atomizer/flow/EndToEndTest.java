@@ -51,22 +51,22 @@ public class EndToEndTest extends AbstractFlowTest {
         Tap recordsSource = platform.makeTap(platform.makeTextScheme(), recordsPath);
         Pipe recordsPipe = new Pipe("records");
         
-        BasePath metaDatasetRecordsPath = platform.makePath("src/test/resources/meta_dataset_record.txt");
-        Tap metaDatasetRecordsSource = platform.makeTap(platform.makeTextScheme(), metaDatasetRecordsPath);
-        Pipe metaDatasetRecordsPipe = new Pipe("meta dataset records");
+        BasePath datasetAttributeRecordsPath = platform.makePath("src/test/resources/datasetId_to_attributeRecordId.txt");
+        Tap datasetAttributeRecordsSource = platform.makeTap(platform.makeTextScheme(), datasetAttributeRecordsPath);
+        Pipe datasetAttributeRecordsPipe = new Pipe("MetaDatasetRecord pipe");
 
         Map<String, Tap>sources = new HashMap<String, Tap>();
         sources.put(recordsPipe.getName(), recordsSource);
-        sources.put(metaDatasetRecordsPipe.getName(), metaDatasetRecordsSource);
+        sources.put(datasetAttributeRecordsPipe.getName(), datasetAttributeRecordsSource);
 
         recordsPipe = new Each(recordsPipe, new CreateRecordsDatumFromText());
-        metaDatasetRecordsPipe = new Each(metaDatasetRecordsPipe, new CreateMetaDatasetRecordsDatumFromText());
+        datasetAttributeRecordsPipe = new Each(datasetAttributeRecordsPipe, new CreateDatasetRecordsDatumFromText());
 
-        Map<String, String> attributeNameToIdMap = readMapFile("src/test/resources/meta_anchor_attribute.txt", true);
-        Map<String, String> attributeIdToAnchorIdMap = readMapFile("src/test/resources/meta_attribute.txt", false);
-        List<String> metaRecords = readFileLines("src/test/resources/meta_record.txt");
-        BaseExtractor extractor = new SimpleExtractor(attributeNameToIdMap, attributeIdToAnchorIdMap, metaRecords);
-        Denature denature = new Denature(recordsPipe, metaDatasetRecordsPipe, extractor);
+        Map<String, String> attributeNameToIdMap = readMapFile("src/test/resources/attributeId_to_attributeName.txt", true);
+        Map<String, String> attributeIdToAnchorIdMap = readMapFile("src/test/resources/attributeId_to_anchorId.txt", false);
+        List<String> attributeRecords = readFileLines("src/test/resources/attributeRecordId_to_attributeId.txt");
+        BaseExtractor extractor = new SimpleExtractor(attributeNameToIdMap, attributeIdToAnchorIdMap, attributeRecords);
+        Denature denature = new Denature(recordsPipe, datasetAttributeRecordsPipe, extractor);
 
         
         Pipe denaturedAttributesPipe = new Pipe("denatured attributes", denature.getDenaturedTailPipe());
